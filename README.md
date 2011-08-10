@@ -80,7 +80,11 @@ programmatically:
     
 ### receiving messages
 
-via command line:
+When sending a message, `sshmq` will make an `ssh` connection to the server and
+attempt to execute the follwing command `sshmq -r -m "<base64 message>"` on
+the remote machine ( this is why `sshmq` must be set up on both machines ).
+
+locally via command line:
 
     sshmq -r -m "c29tZSBtZXNzYWdl"
     
