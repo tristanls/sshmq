@@ -4,6 +4,10 @@ sshmq
 `sshmq` is a way to send messages between machines using key-authenticated
 `ssh`.
 
+## Installation
+
+    npm install sshmq -g
+
 ## Setup
 
 `sshmq` needs to be setup on both the sending and receiving machine. 
