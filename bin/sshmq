@@ -1,0 +1,99 @@
+#!/usr/bin/env node
+
+var logly = require( 'logly' ),
+    path = require( 'path' ),
+    sshmq = require( path.join( __dirname, "../sshmq.js" ) );
+
+var program = path.basename( __filename );
+
+logly.name( program );
+
+var usage = [
+      "usage:",
+      "  " + program + " (-s <recipient>|-r) -m MESSAGE",
+      ""
+    ].join( '\n' ),
+    help = [
+      usage,
+      "options:",
+      "  -h, --help     Displays this information",
+      "  -m MESSAGE     MESSAGE to send or receive",
+      "  -s             Sends the MESSAGE",
+      "  -r             Receives the MESSAGE",
+      "  --debug        Displays debug information",
+      "  --dry-run      See what would happen without processing sending or receiving",
+      ""
+    ].join( '\n' );
+
+var argv = process.argv.slice( 2 ), arg, args = [], options = {
+  loglyMode: 'standard'
+}
+
+if ( argv.length == 0 ) {
+  logly.stdout( help );
+  process.exit( 0 );
+}
+while ( arg = argv.shift() ) {
+  if ( arg === program ) continue;
+  
+  if ( arg[ 0 ] !== '-' ) {
+    // nothing
+  } else {
+    arg = arg.match( /--?(.+)/ )[ 1 ];
+    
+    switch ( arg ) {
+      case 'debug':
+        options.loglyMode = 'debug';
+        logly.mode( 'debug' );
+        break;
+      case 'dry-run':
+        options.dryRun = true;
+        break;
+      case 'help':
+      case 'h':
+        logly.stdout( help );
+        process.exit( 0 );
+        break;
+      case 'm':
+        options.message = argv.shift();
+        break;
+      case 'r':
+        options.mode = 'receive';
+        break;
+      case 's':
+        options.recipients = argv.shift().split( ',' );
+        options.mode = 'send';
+        break;
+    } // switch ( arg )
+  } // else ( '-' options )
+} // while ( arg = argv.shift() )
+
+// mode must be set
+if ( ! options.mode ) {
+  logly.error( "no mode specified\n" + usage );
+  process.exit( 0 );
+}
+
+// if sending, recipient must be set
+if ( options.mode == 'send' ) {
+  if ( ! options.recipients || options.recipients.length < 1 ) {
+    logly.error( "no recipient specified\n" + usage );
+    process.exit( 0 );
+  }
+}
+
+// message must be present
+if ( ! options.message ) {
+  logly.error( "no message provided\n" + usage );
+  process.exit( 0 );
+}
+
+// dump options in debug mode
+logly.debug( function() {
+  for ( option in options ) {
+    if ( ! options.hasOwnProperty( option ) ) continue;
+    logly.debug( '[OPTION] ' + option + ": " + options[ option ] );
+  }
+})
+
+sshmq.sshmq( program, options );

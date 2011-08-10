@@ -1,0 +1,13 @@
+{ "name" : "sshmq"
+, "description" : "SSH wrapped, key-authenticated messaging"
+, "version" : "0.1.0"
+, "homepage" : "https://github.com/tristanls/sshmq"
+, "author" : "Tristan Slominski <tristan.slominski@gmail.com> (http://github.com/tristanls)"
+, "bin" : "./bin/sshmq"
+, "repository" :
+  { "type" : "git"
+  , "url" : "http://github.com/tristanls/sshmq.git" }
+, "dependencies" :
+  { "logly" : "1.x.x" }
+, "engines" : { "node" : "0.4.x" }
+}
